@@ -5,17 +5,25 @@
  */
 interface Props {
   class?: string;
+  /** Anchor id, so the page can be linked to (#experience). */
+  id?: string;
   /** Read panels right-to-left, like a Japanese volume. */
   rtl?: boolean;
+  /** Black gutters: the manga convention for flashbacks. */
+  flashback?: boolean;
   /** Leave the page number off (covers, title pages). */
   unnumbered?: boolean;
   /** Accessible name for the page, if it helps. */
   label?: string;
 }
 
-const { class: className, rtl = false, unnumbered = false, label } = Astro.props;
+const { class: className, id, rtl = false, flashback = false, unnumbered = false, label } = Astro.props;
 ---
-<section class:list={["page-sheet", unnumbered && "page-sheet--unnumbered"]} aria-label={label}>
+<section
+  id={id}
+  class:list={["page-sheet", flashback && "page-sheet--flashback", unnumbered && "page-sheet--unnumbered"]}
+  aria-label={label}
+>
   <div class:list={["page-grid", rtl && "page-grid--rtl", className]}>
     <slot />
   </div>

@@ -28,8 +28,8 @@ interface Props {
   href?: string;
   /** Slam in when scrolled into view. Use for one big moment per chapter. */
   reveal?: boolean;
-  /** How the content is laid out: centred stack, bottom-left stack, or free (position children yourself). */
-  align?: "center" | "start" | "free";
+  /** How the content is laid out: centred stack, bottom-left stack, top-down stack, or free (position children yourself). */
+  align?: "center" | "start" | "top" | "free";
   /** Seed for generated backgrounds, so neighbouring panels don't match. */
   seed?: number;
   /** Focus point for bg="focus", in % of the panel. */
@@ -89,7 +89,7 @@ const hasBreak = Astro.slots.has("break");
     {bg === "tone-fade" && <div class="panel__bg tone tone-fade" aria-hidden="true" />}
     {bg === "focus" && <FocusLines class="panel__bg" seed={seed} x={focusX} y={focusY} />}
     {bg === "speed" && <SpeedLines class="panel__bg" seed={seed} />}
-    <div class:list={["panel__content", align === "center" && "panel__content--center", align === "start" && "panel__content--start"]}>
+    <div class:list={["panel__content", align === "center" && "panel__content--center", align === "start" && "panel__content--start", align === "top" && "panel__content--top"]}>
       <slot />
     </div>
   </div>

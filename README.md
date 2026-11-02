@@ -1,6 +1,6 @@
 # Manga portfolio
 
-A portfolio drawn as a manga volume: a cover, a contents page, one chapter per project, a character profile and an afterword. Built with Astro 7, Tailwind CSS v4 and MDX. No client-side framework; the only JavaScript is Astro's page-turn router.
+A portfolio drawn as a manga volume: a cover, a contents page, one chapter per project, a character profile, a backstory (your CV) and an afterword. Built with Astro 7, Tailwind CSS v4 and MDX. No client-side framework; the only JavaScript is Astro's page-turn router.
 
 ## Run it
 
@@ -16,8 +16,36 @@ Requires Node 22.22 or newer.
 ## Make it yours
 
 1. Edit `src/site.config.ts`: name, role, tagline, email, links, and everything on the profile page (stats, special moves, likes, dislikes, quote).
-2. Replace the two sample chapters in `src/content/chapters/`. They're placeholder stories showing what each component does.
-3. Swap the silhouette on the cover and profile for your own art when you have it (see "Artwork" below).
+2. Edit `src/data/backstory.ts`: your projects, experience, education and certifications (see "Backstory" below).
+3. Replace the two sample chapters in `src/content/chapters/`. They're placeholder stories showing what each component does.
+4. Swap the silhouette on the cover and profile for your own art when you have it (see "Artwork" below).
+
+## Backstory: projects, experience, education, certifications
+
+The `/backstory` page is your CV, told as a manga flashback (black gutters between the panels). Everything on it comes from `src/data/backstory.ts`, so you never need to touch the page itself.
+
+The file is a list of sections. Each section becomes one page, in the order you list them, with a button at the top of the backstory page to jump to it. Each entry in a section becomes a panel:
+
+```ts
+{
+  title: "Data & BI developer",     // role, qualification, certificate or project
+  org: "Company name",              // company, school or issuer
+  where: "Remote",                  // optional
+  start: "2022",                    // free text: "2022", "Mar 2022"…
+  end: "present",                   // leave out for a single date
+  summary: "One or two sentences.",
+  points: ["A highlight.", "Another one."],
+  tags: ["SQL Server", "Python"],
+  link: { label: "Verify", href: "https://…" },
+  feature: true,                    // full-width panel, e.g. your current role
+}
+```
+
+Everything except `title` is optional. Entries are paired side by side with slanted gutters; featured entries and any odd one out get a full-width panel.
+
+**Projects** have `includeChapters: true`, so every chapter is listed automatically (linking to it), followed by any smaller projects you add as entries. You never list a chapter twice.
+
+**Adding a new kind of section later** (awards, talks, languages, volunteering…): copy any section, give it a new `id` (lowercase, no spaces, used in the link `/backstory/#talks`) and `title`, and add entries. There's a commented-out "Talks" example at the bottom of the file. Sections with no entries are hidden, so you can keep an empty one ready.
 
 ## Writing a chapter
 
@@ -138,9 +166,10 @@ src/
   site.config.ts          your details
   content.config.ts       chapter frontmatter schema
   content/chapters/       one .mdx per project
+  data/backstory.ts       projects, experience, education, certifications…
   components/             Panel, Bubble, SFX, …
   layouts/                BaseLayout (fonts, page turn), ChapterLayout
-  pages/                  cover, contents, profile, afterword, 404, chapter route
+  pages/                  cover, contents, profile, backstory, afterword, 404, chapter route
   styles/global.css       tokens, utilities, component styles
 scripts/halftone.mjs      photo → halftone SVG
 ```

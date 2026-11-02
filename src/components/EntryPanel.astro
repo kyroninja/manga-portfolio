@@ -1,0 +1,46 @@
+---
+// One backstory entry (a job, a qualification, a certificate, a project) as a panel.
+import Panel from "./Panel.astro";
+import type { Entry } from "../data/backstory";
+
+type Slant = "/" | "\\";
+interface Props {
+  entry: Entry;
+  class?: string;
+  left?: Slant;
+  right?: Slant;
+  feature?: boolean;
+}
+
+const { entry, class: className, left, right, feature = false } = Astro.props;
+const when = [entry.start, entry.end].filter(Boolean).join("–");
+const org = [entry.org, entry.where].filter(Boolean).join(", ");
+const external = entry.link ? /^https?:/.test(entry.link.href) : false;
+---
+<Panel class={className} left={left} right={right} align="top">
+  <div class:list={["entry", feature && "entry--feature"]}>
+    {when && <p class="label-ink entry__when">{when}</p>}
+    <h3 class="entry__title">{entry.title}</h3>
+    {org && <p class="entry__org">{org}</p>}
+    {entry.summary && <p class="entry__summary">{entry.summary}</p>}
+    {entry.points && entry.points.length > 0 && (
+      <ul class="entry__points">
+        {entry.points.map((p) => <li>{p}</li>)}
+      </ul>
+    )}
+    {((entry.tags && entry.tags.length > 0) || entry.link) && (
+      <div class="entry__foot">
+        {entry.tags && entry.tags.length > 0 && (
+          <ul class="tag-list">
+            {entry.tags.map((t) => <li>{t}</li>)}
+          </ul>
+        )}
+        {entry.link && (
+          <a class="entry__link" href={entry.link.href} rel={external ? "noopener" : undefined}>
+            {entry.link.label}
+          </a>
+        )}
+      </div>
+    )}
+  </div>
+</Panel>

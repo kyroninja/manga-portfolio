@@ -1,0 +1,81 @@
+---
+// The backstory is told as a flashback: in manga, past events are marked by
+// black gutters between the panels. Content comes from src/data/backstory.ts.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { PageGrid, Panel, Caption } from "../components";
+import EntryPanel from "../components/EntryPanel.astro";
+import { backstory, type Entry } from "../data/backstory";
+import { getChapters } from "../lib/chapters";
+import { site } from "../site.config";
+
+type Slant = "/" | "\\";
+
+// Chapters become project entries automatically.
+const fromChapters: Entry[] = (await getChapters()).map((c) => ({
+  title: c.data.title,
+  start: c.data.year ? String(c.data.year) : undefined,
+  summary: c.data.summary,
+  tags: c.data.stack,
+  link: { label: `Read chapter ${c.data.chapter}`, href: `/chapters/${c.id}/` },
+}));
+
+const sections = backstory
+  .map((s) => ({ ...s, entries: [...(s.includeChapters ? fromChapters : []), ...s.entries] }))
+  .filter((s) => s.entries.length > 0);
+
+// Lay entries out in pairs with slanted gutters (alternating direction);
+// featured entries and any odd one out get a full-width panel.
+function place(entries: Entry[]) {
+  const out: { entry: Entry; span: string; left?: Slant; right?: Slant; feature?: boolean }[] = [];
+  let run: Entry[] = [];
+  let pair = 0;
+  const flush = () => {
+    for (let i = 0; i < run.length; i += 2) {
+      if (i + 1 < run.length) {
+        const dir: Slant = pair++ % 2 ? "\\" : "/";
+        out.push({ entry: run[i], span: "md:col-span-3", right: dir });
+        out.push({ entry: run[i + 1], span: "md:col-span-3", left: dir });
+      } else {
+        out.push({ entry: run[i], span: "md:col-span-6" });
+      }
+    }
+    run = [];
+  };
+  for (const entry of entries) {
+    if (entry.feature) {
+      flush();
+      out.push({ entry, span: "md:col-span-6", feature: true });
+    } else {
+      run.push(entry);
+    }
+  }
+  flush();
+  return out;
+}
+---
+<BaseLayout title={`Backstory: ${site.name}`}>
+  <PageGrid unnumbered flashback label="Backstory">
+    <Panel class="md:col-span-6 md:row-span-2" bg="focus" seed={88} focusX={80} focusY={42} align="start">
+      <p class="label-ink backstory__kicker" lang="ja">過去編</p>
+      <h1 class="profile__name halo">Backstory</h1>
+      <Caption>Flashback: how the character got here.</Caption>
+      <nav class="jump" aria-label="Backstory sections">
+        {sections.map((s) => <a class="btn" href={`#${s.id}`}>{s.title}</a>)}
+      </nav>
+    </Panel>
+  </PageGrid>
+
+  {
+    sections.map((s, i) => (
+      <PageGrid id={s.id} flashback label={s.title}>
+        <Panel class="md:col-span-6 backstory__head" bg="speed" seed={i * 7 + 2} align="start">
+          {s.jp && <p class="label-ink backstory__kicker" lang="ja">{s.jp}</p>}
+          <h2 class="backstory__title halo">{s.title}</h2>
+        </Panel>
+        {place(s.entries).map((p) => (
+          <EntryPanel entry={p.entry} class={p.span} left={p.left} right={p.right} feature={p.feature} />
+        ))}
+      </PageGrid>
+    ))
+  }
+</BaseLayout>

@@ -34,11 +34,15 @@ const chapters = await getChapters();
         </Panel>
       ))
     }
-    <Panel href="/profile/" class="md:col-span-3" right="/" align="start">
+    <Panel href="/profile/" class="md:col-span-2" right="/" align="start">
       <p class="teaser__kicker" lang="ja">登場人物</p>
       <h2 class="toc__name">Character profile</h2>
     </Panel>
-    <Panel href="/afterword/" class="md:col-span-3" left="/" bg="tone" align="start">
+    <Panel href="/backstory/" class="md:col-span-2" left="/" right="\" bg="speed" seed={6} align="start">
+      <p class="teaser__kicker" lang="ja">過去編</p>
+      <h2 class="toc__name halo">Backstory</h2>
+    </Panel>
+    <Panel href="/afterword/" class="md:col-span-2" left="\" bg="tone" align="start">
       <p class="teaser__kicker" lang="ja">あとがき</p>
       <h2 class="toc__name halo">Afterword</h2>
     </Panel>

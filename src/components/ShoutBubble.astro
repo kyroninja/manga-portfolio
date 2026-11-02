@@ -1,0 +1,32 @@
+---
+/**
+ * Spiky "shout" balloon. The outline is generated from the text, so each
+ * shout looks hand-drawn but stays the same between builds.
+ * Pass href to turn it into a link.
+ */
+import { hash, rng, fx } from "../lib/random";
+
+interface Props {
+  class?: string;
+  /** Number of spikes. */
+  spikes?: number;
+  seed?: number;
+  href?: string;
+}
+
+const { class: className, spikes = 15, seed, href } = Astro.props;
+const html = await Astro.slots.render("default");
+const r = rng(seed ?? hash(html));
+const n = spikes * 2;
+const points = Array.from({ length: n }, (_, i) => {
+  const a = (i / n) * Math.PI * 2 + (r() - 0.5) * 0.12;
+  const radius = i % 2 ? 50 - r() * 5 : 35 + r() * 6;
+  return `${fx(50 + radius * Math.cos(a))}% ${fx(50 + radius * Math.sin(a))}%`;
+}).join(", ");
+const Tag = href ? "a" : "div";
+---
+<Tag href={href} class:list={["shout ink-outline", className]}>
+  <div class="shout__body" style={`clip-path: polygon(${points})`}>
+    <div class="shout__text" set:html={html} />
+  </div>
+</Tag>

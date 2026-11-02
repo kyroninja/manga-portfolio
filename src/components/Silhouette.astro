@@ -1,0 +1,20 @@
+---
+// Placeholder hero: a dramatic manga silhouette with glinting eyes.
+// Swap it for your own art (see MangaPhoto, or drop an SVG/PNG in /public/art).
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+<svg class={className} viewBox="0 0 200 240" aria-hidden="true" focusable="false">
+  <g fill="currentColor">
+    <path d="M6 240C12 198 44 178 76 172L84 148H116L124 172C156 178 188 198 194 240Z" />
+    <path d="M58 182L70 146L88 170ZM142 182L130 146L112 170Z" />
+    <ellipse cx="100" cy="112" rx="36" ry="45" />
+    <path d="M62 124L44 106L58 99L38 76L62 74L52 46L76 57L76 24L96 45L108 12L117 43L138 22L135 55L158 44L148 74L168 78L144 98L156 110L138 124Z" />
+  </g>
+  <g class="fill-paper">
+    <path d="M76 116L95 121L79 125Z" />
+    <path d="M105 121L124 116L121 125Z" />
+  </g>
+</svg>

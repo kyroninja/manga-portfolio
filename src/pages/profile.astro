@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../site.config";
+import { PageGrid, Panel, Silhouette, SFX, StatBar, Bubble, Caption } from "../components";
+
+const p = site.profile;
+---
+<BaseLayout title={`Character profile: ${site.name}`}>
+  <PageGrid label="Character profile">
+    <Panel class="md:col-span-2 md:row-span-3 portrait" bg="focus" seed={42} focusY={40} align="free">
+      <Silhouette class="portrait__art" />
+      <SFX slot="break" text="ゴゴゴ" vertical size="clamp(2.5rem, 5vw, 3.6rem)" tilt={4} class="portrait__sfx" />
+    </Panel>
+    <Panel class="md:col-span-4" align="start">
+      <p class="teaser__kicker" lang="ja">登場人物</p>
+      <h1 class="profile__name">{site.name}</h1>
+      <dl class="profile__facts">
+        <div><dt>Class</dt><dd>{p.class}</dd></div>
+        <div><dt>Base</dt><dd>{p.base}</dd></div>
+      </dl>
+    </Panel>
+    <Panel class="md:col-span-4 md:row-span-2" align="free">
+      <h2 class="profile__h2">Stats</h2>
+      <div class="stats">
+        {p.stats.map((s) => <StatBar label={s.label} value={s.value} />)}
+      </div>
+    </Panel>
+  </PageGrid>
+
+  <PageGrid label="Special moves, likes and dislikes">
+    <Panel class="md:col-span-6" bg="speed" seed={8} align="free">
+      <h2 class="profile__h2 halo">Special moves</h2>
+      <ol class="moves">
+        {p.moves.map((m) => <li><Caption><strong class="moves__name">{m.name}</strong> {m.text}</Caption></li>)}
+      </ol>
+    </Panel>
+    <Panel class="md:col-span-3" right="\" align="free">
+      <h2 class="profile__h2">Likes</h2>
+      <ul class="likes">{p.likes.map((l) => <li>{l}</li>)}</ul>
+    </Panel>
+    <Panel class="md:col-span-3" left="\" bg="tone" align="free">
+      <h2 class="profile__h2 halo">Dislikes</h2>
+      <ul class="likes likes--no">{p.dislikes.map((l) => <li><Caption>{l}</Caption></li>)}</ul>
+    </Panel>
+    <Panel class="md:col-span-6" bg="tone-fade" seed={4}>
+      <Bubble variant="thought" tail="down-left" size="lg">{p.quote}</Bubble>
+    </Panel>
+  </PageGrid>
+</BaseLayout>

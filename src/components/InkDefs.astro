@@ -1,0 +1,20 @@
+---
+// Shared SVG filters. Rendered once in the base layout.
+// #ink-rough draws a wobbly, uneven ink line around whatever it's applied to
+// (used by the `ink-rough` utility) without distorting the content inside.
+---
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="ink-rough" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="3.5" result="spread" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="noise" />
+      <feDisplacementMap in="spread" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" result="wobble" />
+      <feFlood style="flood-color: var(--color-ink)" result="ink" />
+      <feComposite in="ink" in2="wobble" operator="in" result="line" />
+      <feMerge>
+        <feMergeNode in="line" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+</svg>

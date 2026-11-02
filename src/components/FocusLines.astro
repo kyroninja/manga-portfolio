@@ -1,0 +1,36 @@
+---
+// Concentrated "focus lines" (集中線): tapered ink wedges converging on a point.
+// Generated at build time from a seed, so every panel gets its own set.
+import { rng, fx } from "../lib/random";
+
+interface Props {
+  class?: string;
+  seed?: number;
+  /** Number of lines. */
+  count?: number;
+  /** Where the lines stop, as a fraction of the radius (0 = centre). */
+  inner?: number;
+  /** Focus point, in % of the panel. */
+  x?: number;
+  y?: number;
+}
+
+const { class: className, seed = 1, count = 120, inner = 0.42, x = 50, y = 50 } = Astro.props;
+const r = rng(seed);
+const cx = x * 4;
+const cy = y * 4;
+const R = 600;
+const step = (Math.PI * 2) / count;
+let d = "";
+for (let i = 0; i < count; i++) {
+  const a = i * step + (r() - 0.5) * step;
+  const w = 0.003 + r() * 0.016;
+  const start = (inner + r() * 0.35) * 200;
+  d += `M${fx(cx + start * Math.cos(a))} ${fx(cy + start * Math.sin(a))}`;
+  d += `L${fx(cx + R * Math.cos(a - w))} ${fx(cy + R * Math.sin(a - w))}`;
+  d += `L${fx(cx + R * Math.cos(a + w))} ${fx(cy + R * Math.sin(a + w))}Z`;
+}
+---
+<svg class={className} viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <path d={d} fill="currentColor" />
+</svg>

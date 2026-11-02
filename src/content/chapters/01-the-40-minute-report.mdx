@@ -1,0 +1,61 @@
+---
+chapter: 1
+title: "The 40-minute report"
+jp: "四十分の報告書"
+summary: "A morning sales report took 40 minutes to refresh. The rebuild got it to 90 seconds."
+stack: ["SQL Server", "Python", "Power BI"]
+year: 2025
+---
+import { PageGrid, Panel, Bubble, ShoutBubble, Caption, SFX, Doodle } from "../../components";
+
+{/* Page 1: the problem */}
+<PageGrid>
+  <Panel class="md:col-span-4 md:row-span-2" bg="tone-fade" align="free">
+    <Caption class="absolute left-4 top-4">Monday, 06:58. The sales report is due at seven.</Caption>
+    <Doodle name="monitor" class="absolute bottom-4 left-1/2 w-[min(58%,17rem)] -translate-x-1/2" />
+    <Bubble class="absolute right-4 top-[38%]" tail="down-left">It's still loading?!</Bubble>
+    <SFX text="カチ カチ" class="absolute bottom-5 left-4" size="clamp(1.6rem, 3.5vw, 2.4rem)" tilt={-6} color="ink" />
+  </Panel>
+  <Panel class="md:col-span-2" bg="focus" seed={3}>
+    <Doodle name="clock" class="w-24" />
+    <Caption>Forty minutes. Every single morning.</Caption>
+  </Panel>
+  <Panel class="md:col-span-2" bg="ink">
+    <p class="m-0 text-lg font-bold">Two years of mornings like this.</p>
+  </Panel>
+</PageGrid>
+
+{/* Page 2: the approach */}
+<PageGrid>
+  <Panel class="md:col-span-3 md:row-span-2" right="/" align="free">
+    <Caption class="absolute left-4 top-4">First, find out where the time actually goes.</Caption>
+    <Doodle name="chart" class="absolute bottom-6 left-6 w-28" />
+    <Bubble class="absolute right-6 top-[34%]" tail="down-left" size="sm">Profile first. Guess later.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3 md:row-span-2" left="/" bg="tone" align="start">
+    <Caption variant="ink">What the profiler found:</Caption>
+    <Caption>Row-by-row loops in Python.</Caption>
+    <Caption>Joins done in memory, not in the database.</Caption>
+    <Caption>A full reload of three years of data, every run.</Caption>
+  </Panel>
+  <Panel class="md:col-span-6" bg="speed" seed={12} align="free">
+    <SFX text="ZWOOSH" class="absolute right-6 top-4" size="clamp(2.5rem, 7vw, 4.5rem)" tilt={-4} />
+    <Caption class="absolute bottom-4 left-4">Heavy joins moved into SQL Server, loops became set-based queries, and only rows changed since yesterday get loaded.</Caption>
+  </Panel>
+</PageGrid>
+
+{/* Page 3: the payoff */}
+<PageGrid>
+  <Panel class="md:col-span-6 md:row-span-3" bg="focus" seed={77} reveal rough>
+    <ShoutBubble>Ninety seconds!</ShoutBubble>
+    <Caption>Refresh time: 40 minutes down to 90 seconds.</Caption>
+    <SFX slot="break" text="ドン!" class="absolute -top-6 right-[6%]" size="clamp(3rem, 9vw, 6rem)" tilt={8} />
+  </Panel>
+  <Panel class="md:col-span-3" right="\" align="free">
+    <Doodle name="mug" class="absolute bottom-4 left-5 w-24" />
+    <Bubble class="absolute right-5 top-5" tail="down-left" size="sm">Done before the coffee is.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3" left="\" bg="ink">
+    <p class="m-0 text-lg font-bold">The report now runs itself at six, and nobody waits for it.</p>
+  </Panel>
+</PageGrid>

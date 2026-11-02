@@ -1,0 +1,9 @@
+---
+// Narration box. Position it with Tailwind, e.g. class="absolute left-4 top-4".
+interface Props {
+  class?: string;
+  variant?: "box" | "ink";
+}
+const { class: className, variant = "box" } = Astro.props;
+---
+<div class:list={["caption", variant === "ink" && "caption--ink", className]}><slot /></div>

@@ -1,0 +1,73 @@
+---
+// Simple inked props for panels while you don't have real artwork yet.
+interface Props {
+  name: "monitor" | "clock" | "mug" | "chart" | "sheets";
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+---
+<svg
+  class={className}
+  viewBox="0 0 120 120"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  {
+    name === "monitor" && (
+      <>
+        <rect x="10" y="12" width="100" height="70" rx="4" class="fill-paper" />
+        <path d="M24 30H82M24 42H64" stroke-width="4" />
+        <rect x="24" y="56" width="72" height="11" stroke-width="4" />
+        <rect x="24" y="56" width="11" height="11" fill="currentColor" stroke-width="4" />
+        <path d="M50 82L46 100H74L70 82M34 104H86" />
+      </>
+    )
+  }
+  {
+    name === "clock" && (
+      <>
+        <circle cx="30" cy="26" r="11" fill="currentColor" />
+        <circle cx="90" cy="26" r="11" fill="currentColor" />
+        <circle cx="60" cy="64" r="42" class="fill-paper" />
+        <path d="M60 64V38M60 64L79 76" />
+        <path d="M60 26V31M60 97V102M22 64H27M93 64H98" stroke-width="4" />
+        <path d="M34 102L26 112M86 102L94 112" />
+      </>
+    )
+  }
+  {
+    name === "mug" && (
+      <>
+        <path d="M42 30Q36 22 42 14M56 30Q50 22 56 14M70 30Q64 22 70 14" stroke-width="4" />
+        <path d="M84 52Q104 52 104 68Q104 84 84 84" />
+        <path d="M22 40H86V88Q86 106 68 106H40Q22 106 22 88Z" class="fill-paper" />
+      </>
+    )
+  }
+  {
+    name === "chart" && (
+      <>
+        <path d="M16 14V104H110" />
+        <rect x="28" y="74" width="14" height="30" fill="currentColor" />
+        <rect x="52" y="56" width="14" height="48" fill="currentColor" />
+        <rect x="76" y="34" width="14" height="70" fill="currentColor" />
+        <path d="M26 62L50 46L72 30L98 14M86 14H98V26" stroke-width="4" />
+      </>
+    )
+  }
+  {
+    name === "sheets" && (
+      <>
+        <rect x="34" y="10" width="72" height="84" class="fill-paper" />
+        <rect x="22" y="20" width="72" height="84" class="fill-paper" />
+        <rect x="10" y="30" width="72" height="84" class="fill-paper" />
+        <path d="M10 50H82M10 68H82M10 86H82M34 30V114M58 30V114" stroke-width="3" />
+      </>
+    )
+  }
+</svg>

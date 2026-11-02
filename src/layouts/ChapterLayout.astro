@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "./BaseLayout.astro";
+import { PageGrid, Panel, Caption, SFX } from "../components";
+import { pad, titleWords } from "../lib/chapters";
+
+interface Props {
+  entry: CollectionEntry<"chapters">;
+  next: CollectionEntry<"chapters"> | null;
+}
+const { entry, next } = Astro.props;
+const { chapter, title, jp, summary, stack, year } = entry.data;
+---
+<BaseLayout title={`Chapter ${chapter}: ${title}`} description={summary}>
+  <!-- Title page -->
+  <PageGrid unnumbered label={`Chapter ${chapter} title page`}>
+    <Panel class="splash md:col-span-6 md:row-span-3" bg="focus" seed={chapter * 17} focusX={72} focusY={44} align="free">
+      <span class="splash__number" aria-hidden="true">{pad(chapter)}</span>
+      <div class="splash__head">
+        <p class="splash__kicker"><span lang="ja">第{chapter}話</span><span class="sr-only">Chapter {chapter}</span></p>
+        <h1 class="splash__title halo">{titleWords(title).map(({ word, space, keep }) => <>{space && " "}{keep ? <span class="whitespace-nowrap">{word}</span> : word}</>)}</h1>
+        {jp && <p class="splash__jp halo" lang="ja">{jp}</p>}
+      </div>
+      <div class="splash__foot">
+        <Caption>{summary}</Caption>
+        <div class="splash__meta">
+          {stack.length > 0 && (
+            <ul class="tag-list" aria-label="Built with">
+              {stack.map((s) => <li>{s}</li>)}
+            </ul>
+          )}
+          {year && <p class="splash__year">{year}</p>}
+        </div>
+      </div>
+    </Panel>
+  </PageGrid>
+
+  <div class="chapter-pages">
+    <slot />
+  </div>
+
+  <!-- End page -->
+  <PageGrid unnumbered label="End of chapter">
+    <Panel class="md:col-span-2" bg="ink" right="\">
+      <p class="end__kan" lang="ja" aria-hidden="true">完</p>
+      <p class="m-0 font-bold">End of chapter {chapter}</p>
+    </Panel>
+    {next ? (
+      <Panel class="md:col-span-4" bg="speed" seed={next.data.chapter * 5} left="\" href={`/chapters/${next.id}/`}>
+        <p class="end__label halo">Next chapter</p>
+        <p class="end__title halo">
+          <span lang="ja">第{next.data.chapter}話</span> {next.data.title}
+        </p>
+      </Panel>
+    ) : (
+      <Panel class="md:col-span-4" bg="speed" seed={chapter * 5} left="\" href="/afterword/">
+        <SFX text="つづく" size="clamp(2.5rem, 6vw, 4rem)" tilt={-4} color="ink" />
+        <p class="end__label halo">To be continued. Read the afterword</p>
+      </Panel>
+    )}
+  </PageGrid>
+</BaseLayout>

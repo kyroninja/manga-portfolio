@@ -1,0 +1,21 @@
+---
+/**
+ * Make a photo look printed: greyscale, punchy contrast and a screentone
+ * overlay. For a truly convincing result, pre-process the image with
+ * `npm run halftone -- path/to/photo.jpg` and use the SVG it outputs.
+ */
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  /** Overlay a screentone. */
+  tone?: boolean;
+  /** CSS contrast() amount. */
+  contrast?: number;
+}
+const { src, alt, class: className, tone = true, contrast = 1.6 } = Astro.props;
+---
+<figure class:list={["manga-photo", className]} style={`--contrast: ${contrast}`}>
+  <img src={src} alt={alt} loading="lazy" decoding="async" />
+  {tone && <span class="manga-photo__tone tone tone-fine" aria-hidden="true" />}
+</figure>

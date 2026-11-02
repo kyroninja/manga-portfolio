@@ -1,0 +1,35 @@
+---
+chapter: 2
+title: "The spreadsheet kingdom"
+jp: "表計算の王国"
+summary: "Three people spent twelve hours a week copying numbers between workbooks. One tool replaced the ritual."
+stack: ["Excel", "VBA", "SQL Server"]
+year: 2024
+---
+import { PageGrid, Panel, Bubble, ShoutBubble, Caption, SFX, Doodle } from "../../components";
+
+{/* Page 1: the kingdom */}
+<PageGrid>
+  <Panel class="md:col-span-4 md:row-span-2" bg="tone" align="free">
+    <Caption class="absolute left-4 top-4">Every Friday, three people copied numbers between seven workbooks.</Caption>
+    <Doodle name="sheets" class="absolute bottom-5 left-1/2 w-[min(45%,13rem)] -translate-x-1/2" />
+    <Bubble class="absolute right-4 top-[40%]" tail="down-left" size="sm">Who renamed the tab to FINAL_v3?!</Bubble>
+    <SFX text="ペラ ペラ" class="absolute bottom-4 left-4" size="clamp(1.5rem, 3vw, 2.2rem)" tilt={-8} color="ink" />
+  </Panel>
+  <Panel class="md:col-span-2 md:row-span-2" bg="focus" seed={19}>
+    <ShoutBubble spikes={11}>Enough!</ShoutBubble>
+  </Panel>
+</PageGrid>
+
+{/* Page 2: the fix */}
+<PageGrid>
+  <Panel class="md:col-span-3 md:row-span-2" right="/" align="start">
+    <Doodle name="chart" class="mb-auto w-24" />
+    <Caption>One intake workbook that checks every entry as it's typed.</Caption>
+    <Caption>One table in SQL Server instead of seven copies.</Caption>
+    <Caption>The Friday report, generated with one button.</Caption>
+  </Panel>
+  <Panel class="md:col-span-3 md:row-span-2" left="/" bg="speed" seed={5} reveal>
+    <ShoutBubble>Twelve hours back. Every week.</ShoutBubble>
+  </Panel>
+</PageGrid>

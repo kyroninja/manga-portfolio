@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getChapters, pad } from "../lib/chapters";
+import { PageGrid, Panel } from "../components";
+
+const chapters = await getChapters();
+---
+<BaseLayout title="Contents">
+  <PageGrid unnumbered label="Table of contents">
+    <Panel class="md:col-span-6" bg="ink" align="start">
+      <p class="toc__jp" lang="ja" aria-hidden="true">目次</p>
+      <h1 class="toc__title">Contents</h1>
+    </Panel>
+    {
+      chapters.map((c, i) => (
+        <Panel href={`/chapters/${c.id}/`} class="md:col-span-6 toc-row" bg={i % 2 ? "tone" : "paper"} align="free" seed={i + 3}>
+          <div class="toc">
+            <span class="toc__num" aria-hidden="true">{pad(c.data.chapter)}</span>
+            <div class="toc__body">
+              <p class="toc__kicker">
+                <span lang="ja">第{c.data.chapter}話</span>
+                <span class="sr-only">Chapter {c.data.chapter}</span>
+              </p>
+              <h2 class="toc__name halo">{c.data.title}</h2>
+              <p class="toc__summary">{c.data.summary}</p>
+              {c.data.stack.length > 0 && (
+                <ul class="tag-list" aria-label="Built with">
+                  {c.data.stack.map((s) => <li>{s}</li>)}
+                </ul>
+              )}
+            </div>
+            {c.data.year && <span class="toc__year">{c.data.year}</span>}
+          </div>
+        </Panel>
+      ))
+    }
+    <Panel href="/profile/" class="md:col-span-3" right="/" align="start">
+      <p class="teaser__kicker" lang="ja">登場人物</p>
+      <h2 class="toc__name">Character profile</h2>
+    </Panel>
+    <Panel href="/afterword/" class="md:col-span-3" left="/" bg="tone" align="start">
+      <p class="teaser__kicker" lang="ja">あとがき</p>
+      <h2 class="toc__name halo">Afterword</h2>
+    </Panel>
+  </PageGrid>
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+// Horizontal speed lines: tapered streaks that suggest fast movement.
+import { rng, fx } from "../lib/random";
+
+interface Props {
+  class?: string;
+  seed?: number;
+  count?: number;
+  /** Which edge the streaks fly in from. */
+  from?: "left" | "right";
+}
+
+const { class: className, seed = 1, count = 80, from = "right" } = Astro.props;
+const r = rng(seed);
+let d = "";
+for (let i = 0; i < count; i++) {
+  const y = r() * 200;
+  const len = 90 + r() * 300;
+  const t = 0.4 + r() * 2.4;
+  const edge = from === "right" ? 400 : 0;
+  const tip = from === "right" ? 400 - len : len;
+  d += `M${edge} ${fx(y - t / 2)}L${edge} ${fx(y + t / 2)}L${fx(tip)} ${fx(y)}Z`;
+}
+---
+<svg class={className} viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <path d={d} fill="currentColor" />
+</svg>

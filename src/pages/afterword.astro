@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../site.config";
+import { PageGrid, Panel, ShoutBubble, SFX, Caption } from "../components";
+---
+<BaseLayout title="Afterword">
+  <PageGrid label="Afterword">
+    <Panel class="md:col-span-6" align="free">
+      <p class="teaser__kicker" lang="ja">あとがき</p>
+      <h1 class="profile__name">Afterword</h1>
+      <div class="letter">
+        <p>Thanks for reading volume {Number(site.volume)}.</p>
+        <p>
+          Every chapter in here started as a problem someone was tired of living with. If you have one of those,
+          I'd like to hear about it.
+        </p>
+        <p class="letter__sign">{site.name}</p>
+      </div>
+    </Panel>
+    <Panel class="md:col-span-4 md:row-span-2" bg="focus" seed={23} right="/">
+      <ShoutBubble href={`mailto:${site.email}`}>Say hello!</ShoutBubble>
+      <Caption variant="ink">{site.email}</Caption>
+    </Panel>
+    <Panel class="md:col-span-2 md:row-span-2" bg="ink" left="/" align="start">
+      <h2 class="profile__h2">Elsewhere</h2>
+      <ul class="elsewhere">
+        {site.links.map((l) => <li><a href={l.href} rel="me">{l.label}</a></li>)}
+      </ul>
+    </Panel>
+    <Panel class="md:col-span-6" bg="speed" seed={31}>
+      <SFX text="つづく" size="clamp(3rem, 9vw, 5.5rem)" tilt={-5} color="ink" label="To be continued" />
+      <p class="m-0 halo font-bold">To be continued in volume {Number(site.volume) + 1}.</p>
+    </Panel>
+  </PageGrid>
+</BaseLayout>

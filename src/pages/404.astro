@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { PageGrid, Panel, SFX, Bubble } from "../components";
+---
+<BaseLayout title="Page not found">
+  <PageGrid unnumbered>
+    <Panel class="md:col-span-6 md:row-span-3" bg="focus" seed={404}>
+      <SFX text="ガーン" size="clamp(3.5rem, 12vw, 7rem)" tilt={-6} label="Shock" />
+      <h1 class="profile__name halo">This page didn't make it to print</h1>
+      <Bubble tail="none">Check the address, or start again from the cover.</Bubble>
+      <a class="btn btn--ink" href="/">Back to the cover</a>
+    </Panel>
+  </PageGrid>
+</BaseLayout>

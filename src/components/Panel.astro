@@ -1,0 +1,97 @@
+---
+/**
+ * A single manga panel. Place it inside <PageGrid> and size it with
+ * Tailwind grid classes, e.g. class="md:col-span-4 md:row-span-2".
+ *
+ * Slanted gutters: describe the gutter line you want with "/" or "\"
+ * on BOTH panels that share it, e.g. the left panel gets right="/" and
+ * its neighbour gets left="/". Only slant edges two panels share, and
+ * only between panels of the same height (or width, for top/bottom).
+ * Slants apply from the md breakpoint up; on phones panels stack.
+ */
+import FocusLines from "./FocusLines.astro";
+import SpeedLines from "./SpeedLines.astro";
+
+type Slant = "/" | "\\";
+
+interface Props {
+  class?: string;
+  /** Background: plain paper, screentone, gradient tone, focus lines, speed lines, or solid ink. */
+  bg?: "paper" | "tone" | "tone-fade" | "focus" | "speed" | "ink";
+  top?: Slant;
+  right?: Slant;
+  bottom?: Slant;
+  left?: Slant;
+  /** Hand-inked, wobbly border instead of a clean one. */
+  rough?: boolean;
+  /** Makes the whole panel a link. */
+  href?: string;
+  /** Slam in when scrolled into view. Use for one big moment per chapter. */
+  reveal?: boolean;
+  /** How the content is laid out: centred stack, bottom-left stack, or free (position children yourself). */
+  align?: "center" | "start" | "free";
+  /** Seed for generated backgrounds, so neighbouring panels don't match. */
+  seed?: number;
+  /** Focus point for bg="focus", in % of the panel. */
+  focusX?: number;
+  focusY?: number;
+}
+
+const {
+  class: className,
+  bg = "paper",
+  top,
+  right,
+  bottom,
+  left,
+  rough = false,
+  href,
+  reveal = false,
+  align = "center",
+  seed = 1,
+  focusX = 50,
+  focusY = 50,
+} = Astro.props;
+
+// Build the clip-path polygon from the four corners.
+const S = "var(--slant)";
+const near = (slanted: boolean) => (slanted ? S : "0%");
+const far = (slanted: boolean) => (slanted ? `calc(100% - ${S})` : "100%");
+
+const tl = `${near(left === "/")} ${near(top === "/")}`;
+const tr = `${far(right === "\\")} ${near(top === "\\")}`;
+const br = `${far(right === "/")} ${far(bottom === "/")}`;
+const bl = `${near(left === "\\")} ${far(bottom === "\\")}`;
+
+// Slanted edges reach half a slant into the gutter so the gap stays even.
+const half = `calc(${S} / -2)`;
+const style = [
+  (top || right || bottom || left) && `--clip: polygon(${tl}, ${tr}, ${br}, ${bl})`,
+  top && `--m-t: ${half}; --pad-t: ${S}`,
+  right && `--m-r: ${half}; --pad-r: ${S}`,
+  bottom && `--m-b: ${half}; --pad-b: ${S}`,
+  left && `--m-l: ${half}; --pad-l: ${S}`,
+]
+  .filter(Boolean)
+  .join("; ");
+
+const Tag = href ? "a" : "div";
+const hasBreak = Astro.slots.has("break");
+---
+<Tag
+  href={href}
+  class:list={["panel", rough ? "ink-rough" : "ink-outline", href && "panel--link", align === "free" && "panel--free", hasBreak && "z-10", className]}
+  style={style || undefined}
+  data-reveal={reveal || undefined}
+>
+  <div class:list={["panel__inner", bg === "ink" && "panel__inner--ink"]}>
+    {bg === "tone" && <div class="panel__bg tone" aria-hidden="true" />}
+    {bg === "tone-fade" && <div class="panel__bg tone tone-fade" aria-hidden="true" />}
+    {bg === "focus" && <FocusLines class="panel__bg" seed={seed} x={focusX} y={focusY} />}
+    {bg === "speed" && <SpeedLines class="panel__bg" seed={seed} />}
+    <div class:list={["panel__content", align === "center" && "panel__content--center", align === "start" && "panel__content--start"]}>
+      <slot />
+    </div>
+  </div>
+  {hasBreak && <slot name="break" />}
+</Tag>

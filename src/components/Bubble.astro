@@ -1,0 +1,22 @@
+---
+/**
+ * Speech bubble. `tail` says where the tail points (towards the speaker).
+ * Position it with Tailwind, e.g. class="absolute right-6 top-6".
+ */
+interface Props {
+  class?: string;
+  tail?: "down-left" | "down-right" | "up-left" | "up-right" | "none";
+  variant?: "speech" | "thought" | "whisper";
+  size?: "sm" | "md" | "lg";
+}
+
+const { class: className, tail = "down-right", variant = "speech", size = "md" } = Astro.props;
+const solidTail = tail !== "none" && variant === "speech";
+const dotTail = tail !== "none" && variant !== "speech";
+---
+<div class:list={["bubble", `bubble--${variant}`, size !== "md" && `bubble--${size}`, className]} data-tail={tail}>
+  {solidTail && <span class="bubble__tail bubble__tail--ink" aria-hidden="true" />}
+  <div class="bubble__body lettering"><slot /></div>
+  {solidTail && <span class="bubble__tail bubble__tail--paper" aria-hidden="true" />}
+  {dotTail && <span class="bubble__dots" aria-hidden="true"><i /><i /><i /></span>}
+</div>

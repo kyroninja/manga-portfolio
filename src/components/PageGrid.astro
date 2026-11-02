@@ -1,0 +1,22 @@
+---
+/**
+ * One manga page: a sheet of paper holding a grid of panels.
+ * Six columns from the md breakpoint up, a single webtoon-style column on phones.
+ */
+interface Props {
+  class?: string;
+  /** Read panels right-to-left, like a Japanese volume. */
+  rtl?: boolean;
+  /** Leave the page number off (covers, title pages). */
+  unnumbered?: boolean;
+  /** Accessible name for the page, if it helps. */
+  label?: string;
+}
+
+const { class: className, rtl = false, unnumbered = false, label } = Astro.props;
+---
+<section class:list={["page-sheet", unnumbered && "page-sheet--unnumbered"]} aria-label={label}>
+  <div class:list={["page-grid", rtl && "page-grid--rtl", className]}>
+    <slot />
+  </div>
+</section>

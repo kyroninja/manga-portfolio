@@ -1,0 +1,38 @@
+---
+/**
+ * Sound effect lettering: "BAM", "ドン!", "ゴゴゴ"…
+ * Decorative by default (hidden from screen readers). Pass `label` if the
+ * sound carries meaning the reader would otherwise miss.
+ */
+import { hash, rng, fx } from "../lib/random";
+
+interface Props {
+  text: string;
+  class?: string;
+  /** Any CSS font-size, e.g. "4rem" or "clamp(3rem, 8vw, 6rem)". */
+  size?: string;
+  /** Rotation in degrees. */
+  tilt?: number;
+  color?: "spot" | "ink" | "paper";
+  /** Stack the letters vertically, as Japanese SFX often are. */
+  vertical?: boolean;
+  label?: string;
+  seed?: number;
+}
+
+const { text, class: className, size = "4rem", tilt = -8, color = "spot", vertical = false, label, seed } = Astro.props;
+const r = rng(seed ?? hash(text));
+const isJa = /[\u3040-\u30ff\u4e00-\u9fff]/.test(text);
+const chars = [...text].map((ch) => ({
+  ch: ch === " " ? "\u00a0" : ch,
+  style: `--r:${fx(r() * 14 - 7)}deg; --y:${fx(r() * 0.16 - 0.08)}em; --s:${fx(0.9 + r() * 0.25)}`,
+}));
+---
+<span
+  class:list={["sfx", color !== "spot" && `sfx--${color}`, vertical && "sfx--vertical", className]}
+  style={`--sfx-size: ${size}; --tilt: ${tilt}deg`}
+  lang={isJa ? "ja" : undefined}
+  role={label ? "img" : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : "true"}
+>{chars.map(({ ch, style }) => <span class="sfx__ch" style={style}>{ch}</span>)}</span>

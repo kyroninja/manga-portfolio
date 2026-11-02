@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../site.config";
+import { getChapters, titleWords } from "../lib/chapters";
+import { FocusLines, Silhouette, SFX, Bubble, Caption, Barcode, PageGrid, Panel } from "../components";
+
+const chapters = (await getChapters()).slice(0, 2);
+---
+<BaseLayout title={`${site.name}: Vol. ${site.volume}`}>
+  <!-- The cover -->
+  <section class="page-sheet page-sheet--unnumbered cover" aria-labelledby="cover-title">
+    <FocusLines class="cover__lines" seed={11} count={150} inner={0.3} x={56} y={52} />
+    <p class="cover__spine" lang="ja" aria-hidden="true">{site.jp}　第{Number(site.volume)}巻</p>
+    <p class="cover__volume"><span>Vol.</span> <strong>{site.volume}</strong></p>
+    <div class="cover__masthead">
+      <h1 id="cover-title" class="cover__title">{site.name}</h1>
+      <Caption variant="ink" class="cover__role">{site.role}</Caption>
+    </div>
+    <Silhouette class="cover__hero" />
+    <SFX text="ドン!" class="cover__sfx" size="clamp(3.25rem, 12cqi, 8.5rem)" tilt={-10} />
+    <Bubble class="cover__bubble" tail="down-right" size="lg">{site.tagline}</Bubble>
+    <div class="cover__barcode" aria-hidden="true">
+      <Barcode seed={7} />
+      <span>¥0, free to read</span>
+    </div>
+  </section>
+
+  <div class="cover-actions">
+    <a class="btn btn--ink" href="/contents/">Start reading</a>
+    <a class="btn" href="/profile/">Meet the character</a>
+  </div>
+
+  <!-- Teaser strip of the first chapters -->
+  <div class="section-head">
+    <h2>In this volume</h2>
+    <span lang="ja">収録話</span>
+  </div>
+  <PageGrid unnumbered>
+    {
+      chapters.map((c, i) => (
+        <Panel
+          href={`/chapters/${c.id}/`}
+          class={chapters.length > 1 ? "md:col-span-3 md:row-span-2" : "md:col-span-6 md:row-span-2"}
+          bg={i === 0 ? "tone-fade" : "speed"}
+          seed={c.data.chapter * 9}
+          right={i === 0 && chapters.length > 1 ? "/" : undefined}
+          left={i === 1 ? "/" : undefined}
+          align="start"
+        >
+          <p class="teaser__kicker" lang="ja">第{c.data.chapter}話</p>
+          <h3 class="teaser__title halo">{titleWords(c.data.title).map(({ word, space, keep }) => <>{space && " "}{keep ? <span class="whitespace-nowrap">{word}</span> : word}</>)}</h3>
+          <Caption>{c.data.summary}</Caption>
+        </Panel>
+      ))
+    }
+    <Panel href="/profile/" class="md:col-span-6" bg="ink" align="start">
+      <p class="teaser__kicker" lang="ja">登場人物</p>
+      <h3 class="teaser__title">Character profile</h3>
+      <p class="m-0">Stats, special moves, likes and dislikes.</p>
+    </Panel>
+  </PageGrid>
+</BaseLayout>

@@ -1,0 +1,20 @@
+---
+import { site } from "../site.config";
+
+const links = [
+  { href: "/", label: "Cover" },
+  { href: "/contents/", label: "Contents" },
+  { href: "/profile/", label: "Profile" },
+  { href: "/afterword/", label: "Afterword" },
+];
+const path = Astro.url.pathname.replace(/\/?$/, "/");
+const isCurrent = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+---
+<header class="masthead">
+  <a class="masthead__logo" href="/">{site.name}</a>
+  <nav aria-label="Main">
+    <ul class="masthead__links">
+      {links.map((l) => <li><a href={l.href} aria-current={isCurrent(l.href) ? "page" : undefined}>{l.label}</a></li>)}
+    </ul>
+  </nav>
+</header>

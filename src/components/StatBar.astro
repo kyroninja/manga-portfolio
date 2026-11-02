@@ -1,0 +1,15 @@
+---
+// RPG-style stat bar for the character profile.
+interface Props {
+  label: string;
+  value: number;
+  max?: number;
+}
+const { label, value, max = 10 } = Astro.props;
+const cells = Array.from({ length: max }, (_, i) => i < value);
+---
+<div class="stat">
+  <span class="stat__label">{label}</span>
+  <span class="stat__cells" aria-hidden="true">{cells.map((on) => <i class:list={[on && "on"]} />)}</span>
+  <span class="sr-only">{value} out of {max}</span>
+</div>

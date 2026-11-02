@@ -1,0 +1,47 @@
+---
+import "@fontsource/dela-gothic-one";
+import "@fontsource/comic-neue/400.css";
+import "@fontsource/comic-neue/700.css";
+import "@fontsource/comic-neue/700-italic.css";
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import InkDefs from "../components/InkDefs.astro";
+import Masthead from "../components/Masthead.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../site.config";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = site.description } = Astro.props;
+
+// Page turn between pages. Keyframes live in global.css.
+const turn = { duration: "420ms", easing: "cubic-bezier(.2,.75,.25,1)", fillMode: "both" };
+const leave = { duration: "220ms", easing: "cubic-bezier(.5,0,.75,0)", fillMode: "both" };
+const pageTurn = {
+  forwards: { old: { name: "page-leave", ...leave }, new: { name: "page-enter", ...turn } },
+  backwards: { old: { name: "page-leave-back", ...leave }, new: { name: "page-enter-back", ...turn } },
+};
+---
+<!doctype html>
+<html lang="en" transition:animate="none">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <ClientRouter />
+  </head>
+  <body>
+    <InkDefs />
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Masthead />
+    <main id="main" transition:animate={pageTurn}>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

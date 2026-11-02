@@ -1,0 +1,1178 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Tokens. Manga is printed in one ink on white paper, so the palette
+   is ink + paper, a newsprint "desk" the pages sit on, one spot colour
+   for sound effects, and non-photo blue (the artist's pencil) for
+   anything interactive: focus, hover, selection.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-ink: #000000;
+  --color-paper: #ffffff;
+  --color-newsprint: #dfded8;
+  --color-spot: #e60012;
+  --color-blueline: #38a8e0;
+
+  --font-display: "Dela Gothic One", "Hiragino Kaku Gothic StdN", "Yu Gothic", system-ui, sans-serif;
+  --font-letter: "Comic Neue", "Comic Sans MS", "Chalkboard SE", sans-serif;
+}
+
+:root {
+  --ink-w: 3px; /* panel border weight */
+  --gutter: clamp(0.85rem, 1.7vw, 1.3rem); /* white space between panels */
+  --slant: clamp(1rem, 3vw, 2.25rem); /* how far slanted gutters lean */
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .4 -.18'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  color-scheme: light;
+}
+
+/* Dark mode = a "flashback" chapter: the whole book printed in negative.
+   Delete this block if you want the site to stay white-paper only. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-ink: #ffffff;
+    --color-paper: #000000;
+    --color-newsprint: #1d1d1b;
+    --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .4 -.15'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    color-scheme: dark;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Utilities
+   ------------------------------------------------------------------ */
+
+/* Screentone: a grid of ink dots. Combine with tone-fine / tone-heavy. */
+@utility tone {
+  background-image: radial-gradient(
+    circle,
+    var(--color-ink) var(--tone-dot, 1.15px),
+    transparent calc(var(--tone-dot, 1.15px) + 0.6px)
+  );
+  background-size: var(--tone-size, 6px) var(--tone-size, 6px);
+}
+@utility tone-fine {
+  --tone-size: 4px;
+  --tone-dot: 0.75px;
+}
+@utility tone-heavy {
+  --tone-size: 6px;
+  --tone-dot: 2px;
+}
+/* Gradient tone: fades in from the top, like a cut-and-scraped sheet. */
+@utility tone-fade {
+  mask-image: linear-gradient(to bottom, transparent 8%, #000 92%);
+}
+
+/* An ink outline that follows any shape, including clip-path cuts,
+   which a normal border can't do. --pop adds a hard offset shadow. */
+@utility ink-outline {
+  filter: drop-shadow(var(--ink-w) 0 0 var(--color-ink))
+    drop-shadow(calc(var(--ink-w) * -1) 0 0 var(--color-ink))
+    drop-shadow(0 var(--ink-w) 0 var(--color-ink))
+    drop-shadow(0 calc(var(--ink-w) * -1) 0 var(--color-ink))
+    drop-shadow(var(--pop, 0px) var(--pop, 0px) 0 var(--color-ink));
+}
+/* Same idea, but with a wobbly hand-inked line (SVG filter in InkDefs). */
+@utility ink-rough {
+  filter: url(#ink-rough) drop-shadow(var(--pop, 0px) var(--pop, 0px) 0 var(--color-ink));
+}
+
+/* Comic lettering for dialogue. Uppercase is the genre convention. */
+@utility lettering {
+  font-family: var(--font-letter);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.18;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+
+/* A paper-coloured halo so ink text stays readable over busy art. */
+@utility halo {
+  -webkit-text-stroke: 0.2em var(--color-paper);
+  paint-order: stroke fill;
+}
+
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
+@layer base {
+  html {
+    background: var(--color-newsprint);
+  }
+  body {
+    min-height: 100dvh;
+    background: var(--grain), var(--color-newsprint);
+    color: var(--color-ink);
+    font-family: var(--font-letter);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  [lang="ja"] {
+    font-family: var(--font-display);
+  }
+  ::selection {
+    background: var(--color-blueline);
+    color: #000;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-blueline);
+    outline-offset: 3px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Components
+   ------------------------------------------------------------------ */
+@layer components {
+  /* ---------- Skip link ---------- */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 50;
+    padding: 0.5em 0.9em;
+    background: var(--color-paper);
+    border: 3px solid var(--color-ink);
+    font-weight: 700;
+  }
+  .skip-link:focus {
+    top: 1rem;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    width: min(100% - 1.5rem, 68rem);
+    margin: 0 auto;
+    padding: 1.1rem 0 1.75rem;
+  }
+  .masthead__logo {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    line-height: 1;
+    padding: 0.3em 0.6em 0.35em;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    text-decoration: none;
+    rotate: -2deg;
+  }
+  .masthead__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .masthead__links a {
+    padding: 0.15em 0;
+    font-weight: 700;
+    text-decoration: none;
+    background: linear-gradient(var(--color-blueline), var(--color-blueline)) left bottom / 0 3px no-repeat;
+    transition: background-size 150ms ease-out;
+  }
+  .masthead__links a:hover {
+    background-size: 100% 3px;
+  }
+  .masthead__links a[aria-current="page"] {
+    background-image: linear-gradient(var(--color-ink), var(--color-ink));
+    background-size: 100% 3px;
+  }
+
+  /* ---------- Page sheets: one per manga page ---------- */
+  main {
+    counter-reset: page;
+  }
+  .page-sheet {
+    position: relative;
+    width: min(100% - 1.5rem, 68rem);
+    margin: 0 auto 2.75rem;
+    padding: clamp(1rem, 3.5vw, 2.5rem) clamp(1rem, 3.5vw, 2.5rem) clamp(2.4rem, 4.5vw, 3.25rem);
+    background: var(--color-paper);
+    box-shadow:
+      0 0 0 1px var(--color-ink),
+      7px 7px 0 0 var(--color-paper),
+      7px 7px 0 1px var(--color-ink);
+    counter-increment: page;
+  }
+  /* Page number in the outer bottom corner, alternating like a book. */
+  .page-sheet::after {
+    content: counter(page);
+    position: absolute;
+    right: clamp(1rem, 3.5vw, 2.5rem);
+    bottom: 0.8rem;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+  }
+  .page-sheet:nth-of-type(even)::after {
+    right: auto;
+    left: clamp(1rem, 3.5vw, 2.5rem);
+  }
+  .page-sheet--unnumbered {
+    counter-increment: none;
+  }
+  .page-sheet--unnumbered::after {
+    content: none;
+  }
+
+  /* ---------- Panel grid ---------- */
+  .page-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: minmax(12rem, auto);
+    gap: var(--gutter);
+  }
+  @media (width >= 48rem) {
+    .page-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-auto-rows: minmax(9.5rem, auto);
+    }
+  }
+  /* Right-to-left reading order, like a Japanese tankōbon. */
+  .page-grid--rtl {
+    direction: rtl;
+  }
+  .page-grid--rtl > * {
+    direction: ltr;
+  }
+
+  /* ---------- Panels ---------- */
+  .panel {
+    position: relative;
+    display: block;
+    min-height: 11rem;
+    color: inherit;
+    text-decoration: none;
+    transition:
+      filter 140ms ease-out,
+      translate 140ms ease-out;
+  }
+  .panel__inner {
+    position: relative;
+    height: 100%;
+    min-height: inherit;
+    overflow: hidden;
+    background: var(--color-paper);
+  }
+  .panel__inner--ink {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .panel__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--color-ink);
+    pointer-events: none;
+  }
+  .panel__content {
+    --pad: clamp(0.9rem, 2vw, 1.4rem);
+    position: relative;
+    height: 100%;
+    min-height: inherit;
+    padding: var(--pad);
+  }
+  .panel__content--center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-align: center;
+  }
+  /* Freely positioned panels need room on phones, where they're full width. */
+  @media (width < 48rem) {
+    .panel--free {
+      min-height: 19rem;
+    }
+  }
+  .panel__content--start {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+  /* Slanted gutters only kick in once panels sit side by side. */
+  @media (width >= 48rem) {
+    .panel {
+      margin: var(--m-t, 0) var(--m-r, 0) var(--m-b, 0) var(--m-l, 0);
+    }
+    .panel__inner {
+      clip-path: var(--clip, none);
+    }
+    /* Keep content clear of slanted edges. */
+    .panel__content {
+      padding: calc(var(--pad) + var(--pad-t, 0px)) calc(var(--pad) + var(--pad-r, 0px))
+        calc(var(--pad) + var(--pad-b, 0px)) calc(var(--pad) + var(--pad-l, 0px));
+    }
+  }
+  .panel--link:hover,
+  .panel--link:focus-visible {
+    --pop: 7px;
+    translate: -3px -3px;
+    outline: none;
+  }
+  .panel--link:focus-visible .panel__inner {
+    box-shadow: inset 0 0 0 5px var(--color-blueline);
+  }
+  .panel--link:active {
+    --pop: 0px;
+    translate: 0 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative;
+    display: inline-block;
+    width: max-content;
+    max-width: min(17rem, 100%);
+    font-size: 1rem;
+    z-index: 2;
+  }
+  .bubble--sm {
+    max-width: min(12rem, 100%);
+    font-size: 0.875rem;
+  }
+  .bubble--lg {
+    max-width: min(21rem, 100%);
+    font-size: clamp(1rem, 1.9vw, 1.2rem);
+  }
+  .bubble__body {
+    position: relative;
+    padding: 1.15em 1.6em 1.2em;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: var(--ink-w) solid var(--color-ink);
+    border-radius: 50%;
+  }
+  .bubble--whisper .bubble__body {
+    border-style: dashed;
+    font-weight: 400;
+  }
+  .bubble--thought .bubble__body {
+    border-width: 2px;
+    box-shadow:
+      0 0 0 4px var(--color-paper),
+      0 0 0 6px var(--color-ink);
+  }
+  /* The tail is two stacked shapes: ink behind the bubble, paper in front,
+     so the bubble's border opens seamlessly into the tail. */
+  .bubble__tail {
+    position: absolute;
+    top: calc(100% - 12px);
+    left: 55%;
+    width: 34px;
+    height: 44px;
+  }
+  .bubble__tail--ink {
+    background: var(--color-ink);
+    clip-path: polygon(0% 0%, 3.6% 14.7%, 9% 28.5%, 16.3% 41.4%, 25.6% 53.4%, 36.7% 64.5%, 49.7% 74.7%, 64.6% 84.1%, 81.3% 92.5%, 100% 100%, 91.4% 88.9%, 84% 77.8%, 77.8% 66.7%, 72.7% 55.6%, 68.8% 44.4%, 66% 33.3%, 64.4% 22.2%, 64% 11.1%, 64.7% 0%);
+  }
+  .bubble__tail--paper {
+    background: var(--color-paper);
+    clip-path: polygon(9.6% 0%, 12.7% 13%, 17.8% 26%, 24.7% 38.1%, 33.4% 49.3%, 43.8% 59.7%, 56% 69.4%, 70.1% 78.2%, 75.5% 80.9%, 69% 69.3%, 63.7% 57.7%, 59.6% 46.1%, 56.7% 34.4%, 55% 22.7%, 54.6% 11%, 55.3% 0%);
+  }
+  .bubble[data-tail="down-left"] .bubble__tail {
+    left: auto;
+    right: 55%;
+    scale: -1 1;
+  }
+  .bubble[data-tail="up-right"] .bubble__tail {
+    top: auto;
+    bottom: calc(100% - 12px);
+    scale: 1 -1;
+  }
+  .bubble[data-tail="up-left"] .bubble__tail {
+    top: auto;
+    bottom: calc(100% - 12px);
+    left: auto;
+    right: 55%;
+    scale: -1 -1;
+  }
+  /* Thought and whisper bubbles trail off in little circles instead. */
+  .bubble__dots {
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 58%;
+    width: 36px;
+    height: 36px;
+  }
+  .bubble__dots i {
+    position: absolute;
+    border: 2px solid var(--color-ink);
+    background: var(--color-paper);
+    border-radius: 50%;
+  }
+  .bubble__dots i:nth-child(1) {
+    left: 0;
+    top: 0;
+    width: 15px;
+    height: 12px;
+  }
+  .bubble__dots i:nth-child(2) {
+    left: 15px;
+    top: 15px;
+    width: 10px;
+    height: 8px;
+  }
+  .bubble__dots i:nth-child(3) {
+    left: 26px;
+    top: 26px;
+    width: 6px;
+    height: 5px;
+  }
+  .bubble[data-tail="down-left"] .bubble__dots {
+    left: auto;
+    right: 58%;
+    scale: -1 1;
+  }
+  .bubble[data-tail="up-right"] .bubble__dots {
+    top: auto;
+    bottom: calc(100% + 1px);
+    scale: 1 -1;
+  }
+  .bubble[data-tail="up-left"] .bubble__dots {
+    top: auto;
+    bottom: calc(100% + 1px);
+    left: auto;
+    right: 58%;
+    scale: -1 -1;
+  }
+
+  /* ---------- Shout bubble ---------- */
+  .shout {
+    --ink-w: 3px;
+    position: relative;
+    display: inline-block;
+    z-index: 2;
+  }
+  .shout__body {
+    padding: 2.4em 3.1em;
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+  .shout__text {
+    max-width: 12ch;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.8vw, 2rem);
+    line-height: 1.05;
+    text-align: center;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  a.shout {
+    text-decoration: none;
+    transition: translate 140ms ease-out, filter 140ms ease-out;
+  }
+  a.shout:hover,
+  a.shout:focus-visible {
+    --pop: 6px;
+    translate: -3px -3px;
+    outline: none;
+  }
+  a.shout:focus-visible .shout__body {
+    background: var(--color-blueline);
+  }
+
+  /* ---------- Captions (narration boxes) ---------- */
+  .caption {
+    position: relative;
+    display: inline-block;
+    max-width: 30ch;
+    padding: 0.5em 0.75em 0.55em;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 2px solid var(--color-ink);
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    text-align: left;
+    z-index: 2;
+  }
+  .caption--ink {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  /* ---------- Sound effects ---------- */
+  .sfx {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: var(--sfx-size, 4rem);
+    line-height: 0.95;
+    white-space: nowrap;
+    color: var(--sfx-fill, var(--color-spot));
+    -webkit-text-stroke: 0.1em var(--sfx-line, var(--color-ink));
+    paint-order: stroke fill;
+    text-shadow: 0.06em 0.07em 0 var(--sfx-line, var(--color-ink));
+    rotate: var(--tilt, -8deg);
+    pointer-events: none;
+    user-select: none;
+    z-index: 3;
+  }
+  .sfx--ink {
+    --sfx-fill: var(--color-ink);
+    --sfx-line: var(--color-paper);
+    text-shadow: none;
+  }
+  .sfx--paper {
+    --sfx-fill: var(--color-paper);
+  }
+  .sfx--vertical {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+  }
+  .sfx__ch {
+    display: inline-block;
+    rotate: var(--r, 0deg);
+    translate: 0 var(--y, 0);
+    scale: var(--s, 1);
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.65em 1.2em 0.7em;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 3px solid var(--color-ink);
+    box-shadow: 5px 5px 0 var(--color-ink);
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-decoration: none;
+    transition:
+      translate 120ms ease-out,
+      box-shadow 120ms ease-out;
+  }
+  .btn:hover {
+    translate: -2px -2px;
+    box-shadow: 7px 7px 0 var(--color-blueline);
+  }
+  .btn:active {
+    translate: 5px 5px;
+    box-shadow: 0 0 0 var(--color-ink);
+  }
+  .btn--ink {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  /* ---------- Small pieces ---------- */
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tag-list li {
+    padding: 0.05em 0.55em 0.1em;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 2px solid var(--color-ink);
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.85rem;
+    width: min(100% - 1.5rem, 68rem);
+    margin: 3.5rem auto 1.4rem;
+  }
+  .section-head h2 {
+    margin: 0;
+    font-size: clamp(1.7rem, 4vw, 2.5rem);
+  }
+  .section-head [lang="ja"] {
+    font-size: 1.1rem;
+  }
+  .site-footer {
+    width: min(100% - 1.5rem, 68rem);
+    margin: 3rem auto 0;
+    padding: 1.5rem 0 2.5rem;
+    border-top: 3px solid var(--color-ink);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Motion. One loud moment (the cover), page turns between pages,
+   and an opt-in "slam" for big reveal panels. Nothing else moves.
+   ------------------------------------------------------------------ */
+@keyframes panel-slam {
+  from {
+    opacity: 0;
+    scale: 0.9;
+    rotate: -1.5deg;
+  }
+}
+@keyframes cover-burst {
+  from {
+    opacity: 0;
+    scale: 1.35;
+  }
+}
+@keyframes cover-slam {
+  from {
+    opacity: 0;
+    scale: 3;
+  }
+  55% {
+    opacity: 1;
+  }
+}
+@keyframes cover-drop {
+  from {
+    opacity: 0;
+    translate: 0 -18px;
+  }
+}
+/* Page turn: the old page slides away, the new one wipes in from the edge. */
+@keyframes page-leave {
+  to {
+    opacity: 0;
+    translate: -4% 0;
+  }
+}
+@keyframes page-enter {
+  from {
+    clip-path: inset(0 0 0 100%);
+    translate: 3% 0;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes page-leave-back {
+  to {
+    opacity: 0;
+    translate: 4% 0;
+  }
+}
+@keyframes page-enter-back {
+  from {
+    clip-path: inset(0 100% 0 0);
+    translate: -3% 0;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .panel[data-reveal] {
+      animation: panel-slam linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 30%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Page-specific styles
+   ------------------------------------------------------------------ */
+@layer components {
+  /* ---------- Cover ---------- */
+  .cover {
+    container-type: inline-size;
+    aspect-ratio: 3 / 4.5;
+    padding: 0;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  @media (width >= 48rem) {
+    .cover {
+      aspect-ratio: 16 / 10.5;
+    }
+  }
+  .cover > * {
+    position: absolute;
+    margin: 0;
+  }
+  .cover__lines {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--color-ink);
+  }
+  .cover__spine {
+    top: 1rem;
+    left: 0.9rem;
+    z-index: 3;
+    padding: 0.7em 0.3em;
+    writing-mode: vertical-rl;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-size: clamp(0.8rem, 2cqi, 1.1rem);
+    letter-spacing: 0.12em;
+  }
+  .cover__volume {
+    top: 1rem;
+    right: 1rem;
+    z-index: 3;
+    display: grid;
+    place-content: center;
+    width: clamp(3.75rem, 10cqi, 5.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 3px solid var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(0.7rem, 1.6cqi, 0.95rem);
+    line-height: 1;
+    text-align: center;
+  }
+  .cover__volume strong {
+    font-weight: 400;
+    font-size: clamp(1.4rem, 4cqi, 2.3rem);
+  }
+  .cover__masthead {
+    top: clamp(1rem, 3cqi, 2.2rem);
+    left: clamp(3.4rem, 8cqi, 6rem);
+    right: clamp(5rem, 14cqi, 8rem);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+  .cover__title {
+    margin: 0;
+    font-size: clamp(2.8rem, 13cqi, 10rem);
+    line-height: 0.85;
+    text-transform: uppercase;
+    color: var(--color-paper);
+    -webkit-text-stroke: 0.05em var(--color-ink);
+    paint-order: stroke fill;
+    text-shadow:
+      0.055em 0.065em 0 var(--color-spot),
+      0.075em 0.085em 0 var(--color-ink);
+    overflow-wrap: break-word;
+  }
+  /* On narrow covers the title drops below the volume badge to get the full width. */
+  @media (width < 48rem) {
+    .cover__masthead {
+      top: clamp(5.25rem, 24cqi, 6.5rem);
+      right: 1rem;
+    }
+    .cover__title {
+      font-size: clamp(2.4rem, 12cqi, 4rem);
+    }
+  }
+  .cover__role {
+    font-size: clamp(0.85rem, 2cqi, 1.05rem);
+  }
+  .cover__hero {
+    bottom: 0;
+    left: 50%;
+    z-index: 2;
+    height: 64%;
+    width: auto;
+    translate: -26% 0;
+    color: var(--color-ink);
+  }
+  .cover__sfx {
+    right: 4%;
+    top: 37%;
+  }
+  .cover__bubble {
+    left: 4%;
+    top: 42%;
+    max-width: min(14rem, 52%);
+  }
+  .cover__barcode {
+    right: 0.9rem;
+    bottom: 0.9rem;
+    z-index: 3;
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.45rem 0.5rem 0.35rem;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 2px solid var(--color-ink);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .cover__barcode svg {
+    width: 4.5rem;
+    height: auto;
+  }
+  @media (width >= 48rem) {
+    .cover__hero {
+      height: 82%;
+      translate: -32% 0;
+    }
+    .cover__sfx {
+      right: 7%;
+      top: 30%;
+    }
+    .cover__bubble {
+      left: 6%;
+      top: 47%;
+      max-width: 19rem;
+    }
+  }
+  .cover-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.25rem;
+    width: min(100% - 1.5rem, 68rem);
+    margin: -0.75rem auto 0;
+  }
+
+  /* ---------- Teasers (cover strip, contents extras) ---------- */
+  .teaser__kicker {
+    margin: 0;
+    font-size: 1rem;
+  }
+  .teaser__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3.2vw, 2.3rem);
+  }
+
+  /* ---------- Chapter title page ---------- */
+  .splash .panel__content {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 1.5rem;
+    min-height: clamp(26rem, 60vw, 34rem);
+    padding: clamp(1.2rem, 3vw, 2.2rem);
+  }
+  .splash__number {
+    position: absolute;
+    right: 0.04em;
+    bottom: -0.1em;
+    font-family: var(--font-display);
+    font-size: clamp(9rem, 30vw, 21rem);
+    line-height: 1;
+    color: var(--color-paper);
+    -webkit-text-stroke: 0.025em var(--color-ink);
+    pointer-events: none;
+  }
+  .splash__head,
+  .splash__foot {
+    position: relative;
+    z-index: 1;
+  }
+  .splash__kicker {
+    display: inline-block;
+    margin: 0 0 0.75rem;
+    padding: 0.15em 0.5em 0.2em;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+  }
+  .splash__title {
+    max-width: 14ch;
+    margin: 0;
+    font-size: clamp(2.5rem, 7.5vw, 5.75rem);
+    line-height: 0.95;
+  }
+  .splash__jp {
+    margin: 0.75rem 0 0;
+    font-size: clamp(1rem, 2.4vw, 1.4rem);
+  }
+  .splash__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .splash__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .splash__year {
+    margin: 0;
+    padding: 0.1em 0.5em 0.15em;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-display);
+  }
+
+  /* ---------- Chapter end page ---------- */
+  .end__kan {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 8vw, 5rem);
+    line-height: 1;
+  }
+  .end__label {
+    margin: 0;
+    font-weight: 700;
+  }
+  .end__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+    line-height: 1.1;
+  }
+
+  /* ---------- Contents ---------- */
+  .toc__jp {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .toc__title {
+    margin: 0;
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+  }
+  .toc-row .panel__content {
+    padding: 0;
+  }
+  .toc {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.5rem 1.5rem;
+    height: 100%;
+    padding: clamp(1rem, 2.5vw, 1.6rem);
+  }
+  @media (width >= 48rem) {
+    .toc {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+  }
+  .toc__num {
+    width: 1.65em;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 9vw, 6rem);
+    line-height: 0.85;
+    color: var(--color-paper);
+    -webkit-text-stroke: 0.05em var(--color-ink);
+    paint-order: stroke fill;
+  }
+  .toc__kicker {
+    margin: 0;
+  }
+  .toc__name {
+    margin: 0.15rem 0 0.6rem;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+  .toc__summary {
+    max-width: 60ch;
+    margin: 0 0 0.8rem;
+  }
+  .toc__summary,
+  .toc__kicker span {
+    background: var(--color-paper);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .toc__year {
+    grid-column: 2;
+    justify-self: start;
+    padding: 0.1em 0.5em 0.15em;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-display);
+  }
+  @media (width >= 48rem) {
+    .toc__year {
+      grid-column: auto;
+      justify-self: end;
+    }
+  }
+
+  /* ---------- Profile ---------- */
+  .portrait .panel__content {
+    min-height: clamp(22rem, 60vw, 26rem);
+    padding: 0;
+  }
+  .portrait__art {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    height: 80%;
+    width: auto;
+    translate: -50% 0;
+    color: var(--color-ink);
+  }
+  .portrait__sfx {
+    position: absolute;
+    right: -0.9rem;
+    top: 1.5rem;
+  }
+  .profile__name {
+    margin: 0.25rem 0 1rem;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+  }
+  .profile__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2.5rem;
+    margin: 0;
+  }
+  .profile__facts dt {
+    font-size: 0.9rem;
+  }
+  .profile__facts dd {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+  .profile__h2 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+  .stats {
+    display: grid;
+    gap: 0.85rem;
+    max-width: 34rem;
+  }
+  .stat {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, 9rem) 1fr;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .stat__label {
+    font-weight: 700;
+  }
+  .stat__cells {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+  }
+  .stat__cells i {
+    height: 16px;
+    border: 2px solid var(--color-ink);
+    transform: skewX(-18deg);
+  }
+  .stat__cells i.on {
+    background: var(--color-ink);
+  }
+  .moves {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 40rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .moves .caption {
+    max-width: none;
+  }
+  .moves__name {
+    margin-right: 0.35em;
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+  .likes {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .likes li::before {
+    content: "♥\00a0";
+  }
+  .likes--no li::before {
+    content: none;
+  }
+
+  /* ---------- Afterword ---------- */
+  .letter {
+    max-width: 58ch;
+    font-size: 1.1rem;
+  }
+  .letter p {
+    margin: 0 0 0.9rem;
+  }
+  .letter__sign {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+  }
+  .elsewhere {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .elsewhere a {
+    text-decoration: underline;
+    font-weight: 700;
+    font-size: 1.15rem;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+  .elsewhere a:hover {
+    text-decoration-color: var(--color-blueline);
+  }
+
+  /* ---------- Manga photo ---------- */
+  .manga-photo {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+  }
+  .manga-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(var(--contrast, 1.6)) brightness(1.05);
+  }
+  .manga-photo__tone {
+    position: absolute;
+    inset: 0;
+    mix-blend-mode: multiply;
+    opacity: 0.35;
+  }
+}
+
+/* The cover's one loud moment. */
+@media (prefers-reduced-motion: no-preference) {
+  .cover__lines {
+    animation: cover-burst 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .cover__masthead {
+    animation: cover-drop 500ms 100ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .cover__sfx {
+    animation: cover-slam 520ms 420ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  }
+}

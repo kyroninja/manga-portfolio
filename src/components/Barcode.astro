@@ -1,0 +1,21 @@
+---
+// Decorative back-cover barcode.
+import { rng } from "../lib/random";
+
+interface Props {
+  class?: string;
+  seed?: number;
+}
+const { class: className, seed = 3 } = Astro.props;
+const r = rng(seed);
+const bars: { x: number; w: number }[] = [];
+let x = 0;
+while (x < 92) {
+  const w = 1 + Math.floor(r() * 3);
+  bars.push({ x, w });
+  x += w + 1 + Math.floor(r() * 2);
+}
+---
+<svg class={className} viewBox="0 0 96 40" width="96" height="40" aria-hidden="true" focusable="false">
+  {bars.map((b) => <rect x={b.x} y="0" width={b.w} height="40" fill="currentColor" />)}
+</svg>

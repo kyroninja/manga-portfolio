@@ -1,0 +1,62 @@
+---
+chapter: 3                          # unique number; sets the order
+title: "Chapter title"
+jp: "日本語のサブタイトル"            # optional
+summary: "One sentence shown on the title page and in the contents."
+stack: ["Tool one", "Tool two", "Tool three"]
+year: 2026
+draft: false                        # true hides it everywhere
+---
+import { PageGrid, Panel, Bubble, ShoutBubble, Caption, SFX, Doodle } from "../../components";
+
+{/* Page 1: the problem. Each <PageGrid> is one numbered page (6 columns on desktop). */}
+<PageGrid>
+  <Panel class="md:col-span-4 md:row-span-2" bg="tone-fade" align="free">
+    <Caption class="absolute left-4 top-4">Set the scene: where, when, what was wrong.</Caption>
+    <Doodle name="monitor" class="absolute bottom-4 left-1/2 w-[min(58%,17rem)] -translate-x-1/2" />
+    <Bubble class="absolute right-4 top-[38%]" tail="down-left">Dialogue goes here.</Bubble>
+    <SFX text="カチ カチ" class="absolute bottom-5 left-4" size="clamp(1.6rem, 3.5vw, 2.4rem)" tilt={-6} color="ink" />
+  </Panel>
+  <Panel class="md:col-span-2" bg="focus" seed={3}>
+    <Doodle name="clock" class="w-24" />
+    <Caption>The key number or constraint.</Caption>
+  </Panel>
+  <Panel class="md:col-span-2" bg="ink">
+    <p class="m-0 text-lg font-bold">A short stakes line on a black panel.</p>
+  </Panel>
+</PageGrid>
+
+{/* Page 2: the approach. "/" on both panels that share a gutter slants it. */}
+<PageGrid>
+  <Panel class="md:col-span-3 md:row-span-2" right="/" align="free">
+    <Caption class="absolute left-4 top-4">How you tackled it.</Caption>
+    <Doodle name="chart" class="absolute bottom-6 left-6 w-28" />
+    <Bubble class="absolute right-6 top-[34%]" tail="down-left" size="sm">A thought.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3 md:row-span-2" left="/" bg="tone" align="start">
+    <Caption variant="ink">What you found:</Caption>
+    <Caption>Finding one.</Caption>
+    <Caption>Finding two.</Caption>
+    <Caption>Finding three.</Caption>
+  </Panel>
+  <Panel class="md:col-span-6" bg="speed" seed={12} align="free">
+    <SFX text="ZWOOSH" class="absolute right-6 top-4" size="clamp(2.5rem, 7vw, 4.5rem)" tilt={-4} />
+    <Caption class="absolute bottom-4 left-4">What you changed.</Caption>
+  </Panel>
+</PageGrid>
+
+{/* Page 3: the payoff. Use `reveal` on one panel per chapter at most. */}
+<PageGrid>
+  <Panel class="md:col-span-6 md:row-span-3" bg="focus" seed={77} reveal rough>
+    <ShoutBubble>The result!</ShoutBubble>
+    <Caption>The measurable outcome.</Caption>
+    <SFX slot="break" text="ドン!" class="absolute -top-6 right-[6%]" size="clamp(3rem, 9vw, 6rem)" tilt={8} />
+  </Panel>
+  <Panel class="md:col-span-3" right="\" align="free">
+    <Doodle name="mug" class="absolute bottom-4 left-5 w-24" />
+    <Bubble class="absolute right-5 top-5" tail="down-left" size="sm">Closing line.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3" left="\" bg="ink">
+    <p class="m-0 text-lg font-bold">What changed afterwards.</p>
+  </Panel>
+</PageGrid>

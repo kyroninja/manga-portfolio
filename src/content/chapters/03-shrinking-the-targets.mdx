@@ -1,0 +1,61 @@
+---
+chapter: 3
+title: "Shrinking the targets"
+jp: "目標を縮める"
+summary: "A retail target-setting pipeline on SQL Server, where empirical Bayes shrinkage keeps small stores from getting wild targets."
+stack: ["SQL Server", "Python", "Empirical Bayes", "ETL"]
+year: 2026
+---
+import { PageGrid, Panel, Bubble, ShoutBubble, Caption, SFX, Doodle } from "../../components";
+
+{/* Page 1: the problem */}
+<PageGrid>
+  <Panel class="md:col-span-4 md:row-span-2" bg="tone-fade" align="free">
+    <Caption class="absolute left-4 top-4">TevoDW, the retail data warehouse. Every store needs a sales target.</Caption>
+    <Doodle name="chart" class="absolute bottom-4 left-1/2 w-[min(55%,16rem)] -translate-x-1/2" />
+    <Bubble class="absolute right-4 top-[38%]" tail="down-left">One noisy month and the target is nonsense.</Bubble>
+    <SFX text="ガタ ガタ" class="absolute bottom-5 left-4" size="clamp(1.6rem, 3.5vw, 2.4rem)" tilt={-6} color="ink" />
+  </Panel>
+  <Panel class="md:col-span-2" bg="focus" seed={3}>
+    <Doodle name="sheets" class="w-24" />
+    <Caption>Small stores, thin history, jumpy numbers.</Caption>
+  </Panel>
+  <Panel class="md:col-span-2" bg="ink">
+    <p class="m-0 text-lg font-bold">Raw averages trust every store equally. They shouldn't.</p>
+  </Panel>
+</PageGrid>
+
+{/* Page 2: the approach */}
+<PageGrid>
+  <Panel class="md:col-span-3 md:row-span-2" right="/" align="free">
+    <Caption class="absolute left-4 top-4">Borrow strength from the neighbours.</Caption>
+    <Doodle name="monitor" class="absolute bottom-6 left-6 w-28" />
+    <Bubble class="absolute right-6 top-[34%]" tail="down-left" size="sm">Shrink toward the group.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3 md:row-span-2" left="/" bg="tone" align="start">
+    <Caption variant="ink">Three notebooks, all writing to SQL tables:</Caption>
+    <Caption>Targets: three-tier empirical Bayes (store, channel-category, global), Winsorized bounds, a TrustLevel column.</Caption>
+    <Caption>Significance: Mann-Whitney U with Benjamini-Hochberg correction.</Caption>
+    <Caption>Growth snapshot: CAGR, short-term momentum and SMPY.</Caption>
+  </Panel>
+  <Panel class="md:col-span-6" bg="speed" seed={12} align="free">
+    <SFX text="ZWOOSH" class="absolute right-6 top-4" size="clamp(2.5rem, 7vw, 4.5rem)" tilt={-4} />
+    <Caption class="absolute bottom-4 left-4">Underneath: an ASR ETL with rolling 12-month logic, month-end detection and financial-week gap-filling in the date dimension.</Caption>
+  </Panel>
+</PageGrid>
+
+{/* Page 3: the payoff */}
+<PageGrid>
+  <Panel class="md:col-span-6 md:row-span-3" bg="focus" seed={77} reveal rough>
+    <ShoutBubble>Targets you can trust!</ShoutBubble>
+    <Caption>Every target carries a TrustLevel, so you can see how much history stands behind it.</Caption>
+    <SFX slot="break" text="ドン!" class="absolute -top-6 right-[6%]" size="clamp(3rem, 9vw, 6rem)" tilt={8} />
+  </Panel>
+  <Panel class="md:col-span-3" right="\" align="free">
+    <Doodle name="mug" class="absolute bottom-4 left-5 w-24" />
+    <Bubble class="absolute right-5 top-5" tail="down-left" size="sm">Stats, in SQL.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3" left="\" bg="ink">
+    <p class="m-0 text-lg font-bold">Results land back in the warehouse, ready for reporting.</p>
+  </Panel>
+</PageGrid>

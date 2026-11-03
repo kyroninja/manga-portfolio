@@ -1,0 +1,61 @@
+---
+chapter: 1
+title: "The substation that kept failing"
+jp: "止まり続ける変電所"
+summary: "A 3kV traction substation broke down about 1.1 times a week. A Lean Six Sigma DMAIC project found the cause and took it to near zero."
+stack: ["Lean Six Sigma", "DMAIC", "Root-cause analysis"]
+year: 2021
+---
+import { PageGrid, Panel, Bubble, ShoutBubble, Caption, SFX, Doodle } from "../../components";
+
+{/* Page 1: the problem */}
+<PageGrid>
+  <Panel class="md:col-span-4 md:row-span-2" bg="tone-fade" align="free">
+    <Caption class="absolute left-4 top-4">Boughton substation. December 2020.</Caption>
+    <Doodle name="chart" class="absolute bottom-4 left-1/2 w-[min(55%,16rem)] -translate-x-1/2" />
+    <Bubble class="absolute right-4 top-[38%]" tail="down-left">Another breakdown?!</Bubble>
+    <SFX text="バチッ" class="absolute bottom-5 left-4" size="clamp(1.6rem, 3.5vw, 2.4rem)" tilt={-6} color="ink" />
+  </Panel>
+  <Panel class="md:col-span-2" bg="focus" seed={3}>
+    <Doodle name="clock" class="w-24" />
+    <Caption>About 1.1 failures every week.</Caption>
+  </Panel>
+  <Panel class="md:col-span-2" bg="ink">
+    <p class="m-0 text-lg font-bold">A 3kV traction substation the trains depend on.</p>
+  </Panel>
+</PageGrid>
+
+{/* Page 2: the approach */}
+<PageGrid>
+  <Panel class="md:col-span-3 md:row-span-2" right="/" align="free">
+    <Caption class="absolute left-4 top-4">No guessing. Lean Six Sigma, DMAIC, one phase at a time.</Caption>
+    <Doodle name="sheets" class="absolute bottom-6 left-6 w-28" />
+    <Bubble class="absolute right-6 top-[34%]" tail="down-left" size="sm">Follow the data.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3 md:row-span-2" left="/" bg="tone" align="start">
+    <Caption variant="ink">The five phases:</Caption>
+    <Caption>Define. Measure. Analyse.</Caption>
+    <Caption>Improve. Control.</Caption>
+    <Caption>Each one signed off before the next began.</Caption>
+  </Panel>
+  <Panel class="md:col-span-6" bg="speed" seed={12} align="free">
+    <SFX text="ZWOOSH" class="absolute right-6 top-4" size="clamp(2.5rem, 7vw, 4.5rem)" tilt={-4} />
+    <Caption class="absolute bottom-4 left-4">Root cause: failing PCB components.</Caption>
+  </Panel>
+</PageGrid>
+
+{/* Page 3: the payoff */}
+<PageGrid>
+  <Panel class="md:col-span-6 md:row-span-3" bg="focus" seed={77} reveal rough>
+    <ShoutBubble>Near zero!</ShoutBubble>
+    <Caption>Breakdowns: from 1.1 a week to near zero.</Caption>
+    <SFX slot="break" text="ドン!" class="absolute -top-6 right-[6%]" size="clamp(3rem, 9vw, 6rem)" tilt={8} />
+  </Panel>
+  <Panel class="md:col-span-3" right="\" align="free">
+    <Doodle name="mug" class="absolute bottom-4 left-5 w-24" />
+    <Bubble class="absolute right-5 top-5" tail="down-left" size="sm">Quiet week.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3" left="\" bg="ink">
+    <p class="m-0 text-lg font-bold">Full sign-off on every DMAIC phase, and measurable operational benefits.</p>
+  </Panel>
+</PageGrid>

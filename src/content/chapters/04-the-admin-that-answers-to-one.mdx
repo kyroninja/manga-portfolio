@@ -1,0 +1,61 @@
+---
+chapter: 4
+title: "The admin that answers to one"
+jp: "一人にだけ答える管理者"
+summary: "A custom MCP server that lets an AI assistant inspect and restart containers on a personal server, behind single sign-on."
+stack: ["Python", "FastMCP", "Docker", "OIDC", "CrowdSec"]
+year: 2026
+---
+import { PageGrid, Panel, Bubble, ShoutBubble, Caption, SFX, Doodle } from "../../components";
+
+{/* Page 1: the problem */}
+<PageGrid>
+  <Panel class="md:col-span-4 md:row-span-2" bg="tone-fade" align="free">
+    <Caption class="absolute left-4 top-4">A headless server. A dozen services. SSH for every little check.</Caption>
+    <Doodle name="monitor" class="absolute bottom-4 left-1/2 w-[min(58%,17rem)] -translate-x-1/2" />
+    <Bubble class="absolute right-4 top-[38%]" tail="down-left">What if I could just ask?</Bubble>
+    <SFX text="カタ カタ" class="absolute bottom-5 left-4" size="clamp(1.6rem, 3.5vw, 2.4rem)" tilt={-6} color="ink" />
+  </Panel>
+  <Panel class="md:col-span-2" bg="focus" seed={3}>
+    <Doodle name="clock" class="w-24" />
+    <Caption>Logs, restarts and threat checks, on demand.</Caption>
+  </Panel>
+  <Panel class="md:col-span-2" bg="ink">
+    <p class="m-0 text-lg font-bold">But giving an assistant a shell is a bad idea.</p>
+  </Panel>
+</PageGrid>
+
+{/* Page 2: the approach */}
+<PageGrid>
+  <Panel class="md:col-span-3 md:row-span-2" right="/" align="free">
+    <Caption class="absolute left-4 top-4">So: a small server with a short list of tools.</Caption>
+    <Doodle name="sheets" class="absolute bottom-6 left-6 w-28" />
+    <Bubble class="absolute right-6 top-[34%]" tail="down-left" size="sm">Narrow on purpose.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3 md:row-span-2" left="/" bg="tone" align="start">
+    <Caption variant="ink">The toolbox:</Caption>
+    <Caption>List containers, read logs, restart from an allowlist.</Caption>
+    <Caption>CrowdSec metrics, active decisions and top attackers.</Caption>
+    <Caption>Config in a file, secrets in the environment.</Caption>
+  </Panel>
+  <Panel class="md:col-span-6" bg="speed" seed={12} align="free">
+    <SFX text="ガチャ" class="absolute right-6 top-4" size="clamp(2.5rem, 7vw, 4.5rem)" tilt={-4} />
+    <Caption class="absolute bottom-4 left-4">Python FastMCP over Streamable HTTP, behind Nginx Proxy Manager and Authelia OIDC.</Caption>
+  </Panel>
+</PageGrid>
+
+{/* Page 3: the payoff */}
+<PageGrid>
+  <Panel class="md:col-span-6 md:row-span-3" bg="focus" seed={77} reveal rough>
+    <ShoutBubble>Ask, don't SSH!</ShoutBubble>
+    <Caption>An assistant that can look and nudge, and nothing else.</Caption>
+    <SFX slot="break" text="ドン!" class="absolute -top-6 right-[6%]" size="clamp(3rem, 9vw, 6rem)" tilt={8} />
+  </Panel>
+  <Panel class="md:col-span-3" right="\" align="free">
+    <Doodle name="mug" class="absolute bottom-4 left-5 w-24" />
+    <Bubble class="absolute right-5 top-5" tail="down-left" size="sm">Least privilege.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3" left="\" bg="ink">
+    <p class="m-0 text-lg font-bold">Docker runs rootless, and the server stays containerised to keep its boundary.</p>
+  </Panel>
+</PageGrid>

@@ -1,0 +1,46 @@
+---
+chapter: 2
+title: "One click"
+jp: "ワンクリック報告書"
+summary: "A 20-page monthly performance report used to take hours. Excel VBA on a live database turned it into one click."
+stack: ["Excel VBA", "PowerPoint", "Automation"]
+year: 2021
+---
+import { PageGrid, Panel, Bubble, ShoutBubble, Caption, SFX, Doodle } from "../../components";
+
+{/* Page 1: the chore */}
+<PageGrid>
+  <Panel class="md:col-span-4 md:row-span-2" bg="tone" align="free">
+    <Caption class="absolute left-4 top-4">Every month: a 20-page departmental performance report.</Caption>
+    <Doodle name="sheets" class="absolute bottom-5 left-1/2 w-[min(45%,13rem)] -translate-x-1/2" />
+    <Bubble class="absolute right-4 top-[40%]" tail="down-left" size="sm">Graphs, tables, slides. Again.</Bubble>
+    <SFX text="ペラ ペラ" class="absolute bottom-4 left-4" size="clamp(1.5rem, 3vw, 2.2rem)" tilt={-8} color="ink" />
+  </Panel>
+  <Panel class="md:col-span-2 md:row-span-2" bg="focus" seed={19}>
+    <ShoutBubble spikes={11}>Hours!</ShoutBubble>
+  </Panel>
+</PageGrid>
+
+{/* Page 2: the fix */}
+<PageGrid>
+  <Panel class="md:col-span-3 md:row-span-2" right="/" align="start">
+    <Doodle name="monitor" class="mb-auto w-24" />
+    <Caption>Excel VBA, connected to the live database.</Caption>
+    <Caption>One click builds the PowerPoint.</Caption>
+    <Caption>Graphs and data tables update themselves.</Caption>
+  </Panel>
+  <Panel class="md:col-span-3 md:row-span-2" left="/" bg="speed" seed={5} reveal>
+    <ShoutBubble>Hours to minutes.</ShoutBubble>
+  </Panel>
+</PageGrid>
+
+{/* Page 3: the payoff */}
+<PageGrid>
+  <Panel class="md:col-span-4" bg="ink">
+    <p class="m-0 text-lg font-bold">July 2021. The whole department's reporting got faster.</p>
+  </Panel>
+  <Panel class="md:col-span-2" align="free">
+    <Doodle name="mug" class="absolute bottom-4 left-5 w-20" />
+    <Bubble class="absolute right-4 top-4" tail="down-left" size="sm">Done.</Bubble>
+  </Panel>
+</PageGrid>

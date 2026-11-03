@@ -1,0 +1,61 @@
+---
+chapter: 5
+title: "The server with one door"
+jp: "扉が一つの要塞"
+summary: "A self-hosted VPS where the only way in is a WireGuard tunnel, with a default-deny firewall and CrowdSec watching the front."
+stack: ["Debian", "WireGuard", "nftables", "CrowdSec", "Docker"]
+year: 2026
+---
+import { PageGrid, Panel, Bubble, ShoutBubble, Caption, SFX, Doodle } from "../../components";
+
+{/* Page 1: the problem */}
+<PageGrid>
+  <Panel class="md:col-span-4 md:row-span-2" bg="tone-fade" align="free">
+    <Caption class="absolute left-4 top-4">My own server at kyro.ninja. Wiki, documents, mail, a blog and more.</Caption>
+    <Doodle name="monitor" class="absolute bottom-4 left-1/2 w-[min(58%,17rem)] -translate-x-1/2" />
+    <Bubble class="absolute right-4 top-[38%]" tail="down-left">Everything online is being poked, all day.</Bubble>
+    <SFX text="コン コン" class="absolute bottom-5 left-4" size="clamp(1.6rem, 3.5vw, 2.4rem)" tilt={-6} color="ink" />
+  </Panel>
+  <Panel class="md:col-span-2" bg="focus" seed={3}>
+    <Doodle name="clock" class="w-24" />
+    <Caption>Self-hosting means being your own security team.</Caption>
+  </Panel>
+  <Panel class="md:col-span-2" bg="ink">
+    <p class="m-0 text-lg font-bold">Expose only what has to be public.</p>
+  </Panel>
+</PageGrid>
+
+{/* Page 2: the approach */}
+<PageGrid>
+  <Panel class="md:col-span-3 md:row-span-2" right="/" align="free">
+    <Caption class="absolute left-4 top-4">Deny everything first, then open doors one at a time.</Caption>
+    <Doodle name="sheets" class="absolute bottom-6 left-6 w-28" />
+    <Bubble class="absolute right-6 top-[34%]" tail="down-left" size="sm">Default deny.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3 md:row-span-2" left="/" bg="tone" align="start">
+    <Caption variant="ink">The locks:</Caption>
+    <Caption>SSH and admin panels reachable only over WireGuard.</Caption>
+    <Caption>A default-deny nftables ruleset that survives reboots.</Caption>
+    <Caption>CrowdSec with a firewall bouncer, plus rootless Docker.</Caption>
+  </Panel>
+  <Panel class="md:col-span-6" bg="speed" seed={12} align="free">
+    <SFX text="ガチャン" class="absolute right-6 top-4" size="clamp(2.5rem, 7vw, 4.5rem)" tilt={-4} />
+    <Caption class="absolute bottom-4 left-4">Docker Compose services behind Nginx Proxy Manager, with Authelia single sign-on and two-factor in front.</Caption>
+  </Panel>
+</PageGrid>
+
+{/* Page 3: the payoff */}
+<PageGrid>
+  <Panel class="md:col-span-6 md:row-span-3" bg="focus" seed={77} reveal rough>
+    <ShoutBubble>One door!</ShoutBubble>
+    <Caption>Public traffic reaches the web apps. Everything else needs the tunnel.</Caption>
+    <SFX slot="break" text="ドン!" class="absolute -top-6 right-[6%]" size="clamp(3rem, 9vw, 6rem)" tilt={8} />
+  </Panel>
+  <Panel class="md:col-span-3" right="\" align="free">
+    <Doodle name="mug" class="absolute bottom-4 left-5 w-24" />
+    <Bubble class="absolute right-5 top-5" tail="down-left" size="sm">Sleeps well.</Bubble>
+  </Panel>
+  <Panel class="md:col-span-3" left="\" bg="ink">
+    <p class="m-0 text-lg font-bold">Firewall rules are saved from the live ruleset, never hand-edited.</p>
+  </Panel>
+</PageGrid>

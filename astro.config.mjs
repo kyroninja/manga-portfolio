@@ -5,7 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   // Set this to your real domain before deploying (used for canonical URLs).
-  // site: "https://your-domain.com",
+  // site: "https://kyro.ninja",
   integrations: [mdx()],
   vite: {
     plugins: [tailwindcss()],

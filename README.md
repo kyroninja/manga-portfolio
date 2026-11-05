@@ -13,7 +13,7 @@ npm run preview   # serve the build locally
 
 Requires Node 22.22 or newer.
 
-## Make it yours
+## Make it yours/mine
 
 1. Edit `src/site.config.ts`: name, role, tagline, email, links, and everything on the profile page (stats, special moves, likes, dislikes, quote).
 2. Edit `src/data/backstory.ts`: your projects, experience, education and certifications (see "Backstory" below).

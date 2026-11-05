@@ -12,7 +12,7 @@ export const site = {
   links: [
     { label: "GitHub", href: "https://github.com/kyroninja" },
     { label: "LinkedIn", href: "https://linkedin.com/in/kyroninja" },
-    { label: "Portfolio", href: "https://kyro.ninja" },
+    { label: "Blog", href: "https://blog.kyro.ninja" },
   ],
 
   // The character profile page.
@@ -34,8 +34,8 @@ export const site = {
       { name: "Root-cause strike", text: "Cut weekly OHTE failures from 1.13 to 0.51 with Lean Six Sigma." },
     ],
     // Likes and dislikes aren't on a CV, so these are light-hearted guesses. Edit freely.
-    likes: ["Hackathons", "Self-hosting everything", "Retro gaming"],
-    dislikes: ["Manual reporting", "Copper thieves", "Untested deploys"],
-    quote: "Whether it's a substation or a data warehouse, find the root cause first.",
+    likes: ["Hackathons", "Self-hosting everything", "Retro gaming", "Fun stuff with my wife"],
+    dislikes: ["Manual reporting", "Copper thieves", "Untested deploys", "Deploying on Friday's"],
+    quote: "Do one thing and do it well....",
   },
 };

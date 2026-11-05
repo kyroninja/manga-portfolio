@@ -16,7 +16,7 @@ const chapters = (await getChapters()).slice(0, 2);
       <h1 id="cover-title" class="cover__title">{site.name}</h1>
       <Caption variant="ink" class="cover__role">{site.role}</Caption>
     </div>
-    <Silhouette class="cover__hero" />
+    <img class="cover__hero" src="/art/me.png" alt="Pratish" />
     <SFX text="ドン!" class="cover__sfx" size="clamp(3.25rem, 12cqi, 8.5rem)" tilt={-10} />
     <Bubble class="cover__bubble" tail="down-right" size="lg">{site.tagline}</Bubble>
     <div class="cover__barcode" aria-hidden="true">
